@@ -7,8 +7,19 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 find_package(PCAP REQUIRED)
-find_package(DUMBNET REQUIRED)
+find_package(Threads REQUIRED)
 
+include(FetchContent)
+
+FetchContent_Declare(
+  libdnet
+  GIT_REPOSITORY https://github.com/Jihadist/libdnet.git
+  GIT_TAG        ad34532c85ce3d252db29241684c6b0f4a9ecbcb # devel-1.16.3
+)
+
+FetchContent_MakeAvailable(libdnet)
+
+target_compile_definitions(libdnet INTERFACE HAVE_LIBDNET)
 
 # Checks for header files.
 include(CheckIncludeFiles)
@@ -48,6 +59,6 @@ add_library(
 
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC pcap dumbnet)
+target_link_libraries(${PROJECT_NAME} PUBLIC pcap libdnet)
 
 add_subdirectory(samples)
